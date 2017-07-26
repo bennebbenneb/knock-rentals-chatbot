@@ -1,0 +1,197 @@
+{
+  "questionOrder": [
+    "name",
+    "email",
+    "phone",
+    "movingDate",
+    "bedrooms",
+    "reasons",
+    "amenities"
+  ],
+  "questions": {
+    "name": {
+      "text": "I see you're interested in renting an apartment. I'll need to collect some information first.\nWhat is your name?",
+      "answers": [
+        {
+          "key": "firstName",
+          "text": "First Name",
+          "elementTag": "input",
+          "inputType": "text",
+          "validation": false,
+          "required": true
+        },
+        {
+          "key": "lastName",
+          "text": "Last Name",
+          "elementTag": "input",
+          "inputType": "text",
+          "validation": false,
+          "required": false
+        }
+      ]
+    },
+    "email": {
+      "text": "Thanks, the next thing we'll need is your email address.",
+      "answers": [
+        {
+          "key": "email",
+          "text": "Email",
+          "elementTag": "input",
+          "inputType": "email",
+          "validation": "email",
+          "required": true
+        }
+      ]
+    },
+    "phone": {
+      "text": "<p>Looking good, the next thing we'll need is a phone number were you can be reached.</p>",
+      "answers": [
+        {
+          "key": "phone",
+          "text": "Phone Number",
+          "elementTag": "input",
+          "inputType": "tel",
+          "validation": "tel",
+          "required": true
+        }
+      ]
+    },
+    "movingDate": {
+      "text": "<p>Great, so when are you planning to move?</p>",
+      "answers": [
+        {
+          "key": "movingDate",
+          "text": "Moving Date",
+          "elementTag": "input",
+          "inputType": "date",
+          "validation": "date",
+          "required": true
+        }
+      ]
+    },
+    "bedrooms": {
+      "text": "<p>How many bedrooms are you looking for?</p>",
+      "answers": [
+        {
+          "key": "bedrooms",
+          "text": "Bedrooms",
+          "elementTag": "select",
+          "options": [
+            {
+              "value": "",
+              "text": "Make a selection"
+            },
+            {
+              "value": "0",
+              "text": "0 Bedroom (Studio)"
+            },
+            {
+              "value": "1",
+              "text": "1 Bedroom"
+            },
+            {
+              "value": "2",
+              "text": "2 Bedroom"
+            },
+            {
+              "value": "3",
+              "text": "3 Bedroom"
+            },
+            {
+              "value": "4",
+              "text": "4 Bedroom"
+            },
+            {
+              "value": "5",
+              "text": "5 Bedroom"
+            },
+            {
+              "value": "6+",
+              "text": "6+ Bedroom"
+            }
+          ],
+          "validation": false,
+          "required": true
+        }
+      ]
+    },
+    "reasons": {
+      "text": "<p>What are your reasons for moving? You can choose more than one reason.</p>",
+      "answers": [
+        {
+          "key": "movingReasons",
+          "text": "Moving Reasons",
+          "elementTag": "select",
+          "attr": {
+            "multiple": true
+          },
+          "options": [
+            {
+              "value": "work",
+              "text": "To be closer to work"
+            },
+            {
+              "value": "family",
+              "text": "To be closer to family"
+            },
+            {
+              "value": "retirement",
+              "text": "To find a retirement community"
+            },
+            {
+              "value": "upgrade",
+              "text": "To find a nicer apartment"
+            },
+            {
+              "value": "downgrade",
+              "text": "To find a more affordable apartment"
+            }
+          ],
+          "validation": false,
+          "required": false
+        },
+        {
+          "key": "movingReasonOther",
+          "text": "Other Reasons",
+          "elementTag": "textarea",
+          "validation": false,
+          "required": false
+        }
+      ]
+    },
+    "amenities": {
+      "text": "<p>Last question, what amenities are you looking for?</p>",
+      "answers": [
+        {
+          "key": "amenities",
+          "text": "Amenities",
+          "elementTag": "select",
+          "attr": {
+            "multiple": true
+          },
+          "options": [
+            {
+              "value": "balcony",
+              "text": "Balcony"
+            },
+            {
+              "value": "garage",
+              "text": "Garage"
+            },
+            {
+              "value": "gym",
+              "text": "Gym"
+            },
+            {
+              "value": "gate",
+              "text": "Gated Access"
+            }
+          ],
+          "validation": false,
+          "required": false
+        }
+      ]
+    }
+  },
+  "completedMessage": "Alright, that's all the info I need."
+}

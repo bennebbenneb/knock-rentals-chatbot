@@ -1,0 +1,29 @@
+.chat-display {
+  display: flex;
+  flex-flow: column;
+  justify-content: flex-end;
+  flex: 1;
+  background: #ccc;
+  padding: 10px;
+}
+.chat-display .message-history{
+  display: flex;
+  flex-flow: column;
+}
+.chat-display .user-message {
+  align-self: flex-end;
+  background: rgb(109, 167, 255);
+  padding:5px;
+  margin:5px;
+  border-radius: 10px;
+}
+.chat-display .bot-message {
+  align-self: flex-start;
+  background: rgb(72, 255, 137);
+  padding:5px;
+  margin:5px;
+  border-radius: 10px;
+}
+.chat-display .bot-error-message {
+  color:rgb(255,0,0)
+}

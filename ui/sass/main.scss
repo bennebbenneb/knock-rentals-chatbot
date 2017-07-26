@@ -1,0 +1,10 @@
+@import "App";
+@import "./components/Chatbot/Chatbot";
+
+body {
+  margin: 0;
+}
+
+#root {
+  display: flex;
+}
