@@ -11,7 +11,7 @@
   ],
   "questions": {
     "name": {
-      "text": "I see you're interested in renting an apartment. I'll need to collect some information first.\nWhat is your name?",
+      "text": "I see you're interested in renting an apartment. I'll need to collect some information first. What is your name?",
       "answers": [
         {
           "key": "firstName",
@@ -32,7 +32,7 @@
       ]
     },
     "email": {
-      "text": "Thanks, the next thing we'll need is your email address.",
+      "text": "Thanks {firstName}, the next thing we'll need is your email address.",
       "answers": [
         {
           "key": "email",
@@ -236,5 +236,5 @@
       ]
     }
   },
-  "completedMessage": "Alright, that's all the info I need."
+  "completedMessage": "Thanks {firstName}. That's all the information we need to set you up with a great apartment. Expect to hear from us soon!"
 }

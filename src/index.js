@@ -16,16 +16,19 @@ app.post("/service/chatbot/", (req, res) => {
     mongoDBPromise.then((db) => {
 
         let ipAddr = req.headers["x-forwarded-for"];
-        if (ipAddr){
+        if (ipAddr) {
             const list = ipAddr.split(",");
-            ipAddr = list[list.length-1];
+            ipAddr = list[list.length - 1];
         } else {
             ipAddr = req.connection.remoteAddress;
         }
-        user.ip = ipAddr;
         db.collection("chatbot").insertOne({
-                history:history,
-                user:user
+                history: history,
+                user: user,
+                analytics: {
+                    ipAddress: ipAddr,
+                    userAgent: req.headers['user-agent']
+                }
             },
             (err, result) => {
                 if (err) {
@@ -34,7 +37,7 @@ app.post("/service/chatbot/", (req, res) => {
                 res.send(JSON.stringify({}));
             }
         );
-    }).catch((error)=>{
+    }).catch((error) => {
         res.status(500);
         res.send(JSON.stringify({}));
     });

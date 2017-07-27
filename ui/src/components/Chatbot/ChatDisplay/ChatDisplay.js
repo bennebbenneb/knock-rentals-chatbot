@@ -11,8 +11,14 @@ class ChatDisplay extends React.Component {
 
     render() {
         const allMessageDisplay = this.props.history.map((message, index) => {
+            let templatedMessage = message;
+            Object.keys(this.props.User).forEach((key) => {
+                const wrappedKey = "{" + key + "}";
+                templatedMessage.text = templatedMessage.text.replace(wrappedKey, this.props.User[key]);
+            });
+
             return <div key={"message" + index} className={message.isBot ? "bot-message" : "user-message" }>
-                <p>{message.text}</p>
+                <p>{templatedMessage.text}</p>
             </div>
         });
 
@@ -31,6 +37,7 @@ function mapStateToProps(state) {
         questions: state.ChatScript.present.questions,
         activeQuestionIndex: state.ChatScript.present.activeQuestionIndex,
         completedMessage: state.ChatScript.present.completedMessage,
+        User: state.User,
         firstName: state.User.firstName,
     }
 }

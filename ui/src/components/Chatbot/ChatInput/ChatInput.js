@@ -159,16 +159,140 @@ class ChatInput extends React.Component {
 
                 isValid = false;
             }
+
+            if (answer.validation) {
+                isValid = isValid && this._validator(answer.validation, this.refs[answer.key].value);
+            }
         });
         return isValid;
+    }
+
+    _validator(validationKey, value) {
+        if (validationKey === "tel") {
+            const rawNumbers = value.replace(/\D+/g, "");
+            const randomizer = Math.random() * 3;
+
+            if (rawNumbers.length < 10) {
+                if (randomizer > 2) {
+                    this.props.addToChatHistory({
+                        text: "Make sure to enter your full 10 digit phone number",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                else if (randomizer > 1) {
+                    this.props.addToChatHistory({
+                        text: "I think you're missing some numbers",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                else {
+                    this.props.addToChatHistory({
+                        text: "Whoops! You're missing some numbers",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                return false;
+            }
+            else if ((rawNumbers + "").indexOf("555") === 0) {
+                if (randomizer > 2) {
+                    this.props.addToChatHistory({
+                        text: "A 555 number? I see...",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                else if (randomizer > 1) {
+                    this.props.addToChatHistory({
+                        text: "Did you get this number from a movie by chance?",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                else {
+                    this.props.addToChatHistory({
+                        text: "We need a valid phone number",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                return false;
+            }
+        }
+        if (validationKey === "email") {
+            if (!value.match(/\S+@\S+/)) {
+                const randomizer = Math.random() * 3;
+                if (randomizer > 2) {
+                    this.props.addToChatHistory({
+                        text: "That email doesn't look quite right.",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                else if (randomizer > 1) {
+                    this.props.addToChatHistory({
+                        text: "Are you sure that's your email?",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                else {
+                    this.props.addToChatHistory({
+                        text: "Fix the issue with your email before we go on.",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                return false;
+            }
+        }
+        if (validationKey === "date") {
+
+            const movingDate = new Date(value);
+            let now = new Date();
+            now.setMilliseconds(0);
+            now.setSeconds(0);
+            now.setMinutes(0);
+            now.setHours(0);
+            const diffInDates = movingDate.getTime() - now.getTime();
+            const oneDay = 8.64e+7;
+
+            if (diffInDates < oneDay) {
+                const randomizer = Math.random() * 3;
+                if (randomizer > 2) {
+                    this.props.addToChatHistory({
+                        text: "Please choose a date at least one full day from today.",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+
+                else if (randomizer > 1) {
+                    this.props.addToChatHistory({
+                        text: "That's too soon.",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                else {
+                    this.props.addToChatHistory({
+                        text: "We need more notice.",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                return false;
+            }
+        }
+        return true;
     }
 
     _saveUserInfo() {
         const currentQuestion = this._getCurrentQuestion();
         currentQuestion.answers.forEach((answer) => {
             const methodKey = "setUser" + this._capitalize(answer.key);
-
-
             let paramValue = "";
             if (answer.inputType === "checkbox") {
                 paramValue = answer.options.reduce((acc, option) => {
