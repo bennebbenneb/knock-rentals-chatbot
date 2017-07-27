@@ -1,10 +1,11 @@
 .chat-display {
+  display: flex;
   flex-flow: column;
   justify-content: flex-end;
   flex: 1;
+  min-height:35vh;
   background: #ccc;
   padding: 10px;
-  overflow-y: scroll;
 }
 
 .chat-display .message-history {
