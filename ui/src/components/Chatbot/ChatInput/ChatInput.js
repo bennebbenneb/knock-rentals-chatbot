@@ -249,8 +249,16 @@ class ChatInput extends React.Component {
             }
         }
         if (validationKey === "date") {
-
             const movingDate = new Date(value);
+            if (movingDate.toString() === "Invalid Date") {
+                this.props.addToChatHistory({
+                    text: "That's not a valid date. Try this format, MM/DD/YYYY",
+                    isBot: true,
+                    isError: true
+                });
+                return false;
+            }
+
             let now = new Date();
             now.setMilliseconds(0);
             now.setSeconds(0);
