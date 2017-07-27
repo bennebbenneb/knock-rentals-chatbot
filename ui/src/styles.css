@@ -42,7 +42,7 @@ form.chat-input {
   form.chat-input {
     flex-flow: column; }
 
-  .chat-input input[type=submit] {
+  .chat-input input[type=submit], .chat-input button {
     width: 100% !important;
     height: 75px !important; } }
 .chat-input input, .chat-input label, .chat-input select, .chat-input textarea {
@@ -55,8 +55,17 @@ form.chat-input {
   border: none;
   font-size: 1.3em;
   background: lime;
-  height: 100%;
+  height: 50px;
   width: 100px;
+  border-radius: 5px; }
+
+.chat-input button {
+  border: none;
+  font-size: 1.3em;
+  background: #ff371a;
+  height: 50px;
+  width: 100px;
+  color: #000;
   border-radius: 5px; }
 
 .chat-input-group {
