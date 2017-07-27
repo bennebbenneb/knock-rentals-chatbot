@@ -5,7 +5,7 @@ import {addToChatHistory, setActiveQuestionIndex} from "../../../actions/ChatScr
 class ChatDisplay extends React.Component {
     componentWillReceiveProps(props) {
         setTimeout(() => {
-            this.refs.chatDisplay.scrollTop = 1000000000;
+            window.scrollTo(0,document.body.scrollHeight);
         }, 1)
     }
 
