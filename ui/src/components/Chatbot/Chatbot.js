@@ -1,7 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import axios from 'axios'
-import {setActiveQuestionIndex, setQuestions, setQuestionOrder,setCompletedMessage} from "../../actions/ChatScript/ChatScript";
+import {setActiveQuestionIndex, setQuestions, setQuestionOrder,setCompletedMessage, addToChatHistory} from "../../actions/ChatScript/ChatScript";
 
 import ChatDisplay from './ChatDisplay/ChatDisplay';
 import ChatInput from './ChatInput/ChatInput';
@@ -13,6 +13,11 @@ class Chatbot extends React.Component {
                 this.props.setQuestions(response.data.questions);
                 this.props.setQuestionOrder(response.data.questionOrder);
                 this.props.setCompletedMessage(response.data.completedMessage);
+
+                const currentQuestionId = response.data.questionOrder[0];
+                const currentQuestion = response.data.questions[currentQuestionId];
+
+                this.props.addToChatHistory(Object.assign({isBot: true}, currentQuestion))
             })
             .catch((error) => {
             });
@@ -42,6 +47,7 @@ function mapDispatchToProps(dispatch) {
         setQuestions: (questions) => dispatch(setQuestions(questions)),
         setQuestionOrder: (questionOrder) => dispatch(setQuestionOrder(questionOrder)),
         setCompletedMessage: (message) => dispatch(setCompletedMessage(message)),
+        addToChatHistory: (chatObject) => dispatch(addToChatHistory(chatObject)),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(Chatbot);

@@ -12,6 +12,7 @@
   },
   "author": "Ben Sisson",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "compression": "^1.6.2",
     "express": "^4.15.2",
     "mongodb": "^2.2.30",

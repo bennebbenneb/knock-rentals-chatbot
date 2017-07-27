@@ -7,6 +7,7 @@ const User = (state = {
     moveReasons: [],
     movingReasonOther: null,
     amenities: [],
+    pets: null,
 }, action = {}) => {
     if (action.type === "SET_USER_FIRST_NAME") {
         return {...state, firstName: action.payload};
@@ -34,6 +35,9 @@ const User = (state = {
     }
     if (action.type === "SET_USER_AMENITIES") {
         return {...state, amenities: action.payload};
+    }
+    if (action.type === "SET_USER_PETS") {
+        return {...state, pets: action.payload};
     }
     return {...state};
 };

@@ -29,10 +29,14 @@ const ChatScript = {
             payload: completedMessage
         }
     },
-    setErrorMessage: (errorMessage) => {
+    goBack: () => {
         return {
-            type: "SET_ERROR_MESSAGE",
-            payload: errorMessage
+            type: "GO_BACK"
+        }
+    },
+    saveState: () => {
+        return {
+            type: "SAVE_STATE"
         }
     }
 };

@@ -6,6 +6,7 @@
     "movingDate",
     "bedrooms",
     "reasons",
+    "pets",
     "amenities"
   ],
   "questions": {
@@ -44,7 +45,7 @@
       ]
     },
     "phone": {
-      "text": "<p>Looking good, the next thing we'll need is a phone number were you can be reached.</p>",
+      "text": "Looking good, the next thing we'll need is a phone number were you can be reached.",
       "answers": [
         {
           "key": "phone",
@@ -57,7 +58,7 @@
       ]
     },
     "movingDate": {
-      "text": "<p>Great, so when are you planning to move?</p>",
+      "text": "Great, so when are you planning to move?",
       "answers": [
         {
           "key": "movingDate",
@@ -70,7 +71,7 @@
       ]
     },
     "bedrooms": {
-      "text": "<p>How many bedrooms are you looking for?</p>",
+      "text": "How many bedrooms are you looking for?",
       "answers": [
         {
           "key": "bedrooms",
@@ -116,15 +117,13 @@
       ]
     },
     "reasons": {
-      "text": "<p>What are your reasons for moving? You can choose more than one reason.</p>",
+      "text": "What are your reasons for moving? You can choose more than one reason.",
       "answers": [
         {
           "key": "movingReasons",
           "text": "Moving Reasons",
-          "elementTag": "select",
-          "attr": {
-            "multiple": true
-          },
+          "elementTag": "input",
+          "inputType": "checkbox",
           "options": [
             {
               "value": "work",
@@ -159,16 +158,60 @@
         }
       ]
     },
+    "pets": {
+      "text": "How many pets will you be bring with you?",
+      "answers": [
+        {
+          "key": "pets",
+          "text": "Pets",
+          "elementTag": "select",
+          "options": [
+            {
+              "value": "",
+              "text": "Make a selection"
+            },
+            {
+              "value": "0",
+              "text": "0 Pets"
+            },
+            {
+              "value": "1",
+              "text": "1 Pet"
+            },
+            {
+              "value": "2",
+              "text": "2 Pets"
+            },
+            {
+              "value": "3",
+              "text": "3 Pets"
+            },
+            {
+              "value": "4",
+              "text": "4 Pets"
+            },
+            {
+              "value": "5",
+              "text": "5 Pets"
+            },
+            {
+              "value": "6+",
+              "text": "6+ Pets"
+            }
+          ],
+          "validation": false,
+          "required": true
+        }
+      ]
+    },
     "amenities": {
-      "text": "<p>Last question, what amenities are you looking for?</p>",
+      "text": "Last question, what amenities are you looking for?",
       "answers": [
         {
           "key": "amenities",
           "text": "Amenities",
-          "elementTag": "select",
-          "attr": {
-            "multiple": true
-          },
+          "elementTag": "input",
+          "inputType": "checkbox",
           "options": [
             {
               "value": "balcony",

@@ -3,35 +3,22 @@ import {connect} from 'react-redux'
 import {addToChatHistory, setActiveQuestionIndex} from "../../../actions/ChatScript/ChatScript";
 
 class ChatDisplay extends React.Component {
+    componentWillReceiveProps(props) {
+        setTimeout(() => {
+            this.refs.chatDisplay.scrollTop = 1000000000;
+        }, 1)
+    }
 
     render() {
-        const qIndex = this.props.activeQuestionIndex;
+        const allMessageDisplay = this.props.history.map((message, index) => {
+            return <div key={"message" + index} className={message.isBot ? "bot-message" : "user-message" }>
+                <p>{message.text}</p>
+            </div>
+        });
 
-        if (qIndex === this.props.questionOrder.length) {
-            return (
-                <div className="chat-display">
-                    <div className="message-history">{this.props.history}</div>
-                    <p className="current-message">{this.props.completedMessage}</p>
-                    {
-                        this.props.errorMessage
-                            ? <p className="error-message">{this.props.errorMessage}</p>
-                            : ""
-                    }
-                </div>
-
-            )
-        }
-        const currentQuestionId = this.props.questionOrder[qIndex];
-        const currentQuestion = this.props.questions[currentQuestionId];
         return (
-            <div className="chat-display">
-                <div className="message-history">{this.props.history}</div>
-                <p className="current-message">{currentQuestion.text}</p>
-                {
-                    this.props.errorMessage
-                        ? <p className="error-message">{this.props.errorMessage}</p>
-                        : ""
-                }
+            <div ref="chatDisplay" className="chat-display">
+                <div className="message-history">{allMessageDisplay}</div>
             </div>
         );
     }
@@ -39,12 +26,11 @@ class ChatDisplay extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        questionOrder: state.ChatScript.questionOrder,
-        history: state.ChatScript.history,
-        questions: state.ChatScript.questions,
-        errorMessage: state.ChatScript.errorMessage,
-        activeQuestionIndex: state.ChatScript.activeQuestionIndex,
-        completedMessage: state.ChatScript.completedMessage,
+        questionOrder: state.ChatScript.present.questionOrder,
+        history: state.ChatScript.present.history,
+        questions: state.ChatScript.present.questions,
+        activeQuestionIndex: state.ChatScript.present.activeQuestionIndex,
+        completedMessage: state.ChatScript.present.completedMessage,
         firstName: state.User.firstName,
     }
 }

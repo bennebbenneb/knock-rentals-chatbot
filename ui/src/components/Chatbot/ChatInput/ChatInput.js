@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux'
-import {addToChatHistory, setActiveQuestionIndex, setErrorMessage} from "../../../actions/ChatScript/ChatScript";
+import axios from 'axios'
+import {addToChatHistory, setActiveQuestionIndex, goBack, saveState} from "../../../actions/ChatScript/ChatScript";
 import {
     setUserFirstName,
     setUserLastName,
@@ -11,21 +12,32 @@ import {
     setUserMovingReasonOther,
     setUserBedrooms,
     setUserAmenities,
+    setUserPets
 
 } from "../../../actions/User/User";
 
 class ChatInput extends React.Component {
-
     handleFormSubmit(event) {
         event.preventDefault();
+        this.props.saveState()
         if (this._isValid()) {
             this._addToHistory();
             this._saveUserInfo();
-            this.props.setErrorMessage("");
             this.props.setActiveQuestionIndex(this.props.activeQuestionIndex + 1);
         }
-        window.scrollTo(0, document.body.scrollHeight);
-        console.dir(    this.refs.chatForm.getElementsByTagName("input")[0]);
+
+        const isCompleted = (this.props.activeQuestionIndex + 1) === this.props.questionOrder.length;
+        if (isCompleted) {
+            setTimeout(() => {
+                const isCompleted = this.props.activeQuestionIndex === this.props.questionOrder.length;
+                if (isCompleted) {
+                    axios.post("/service/chatbot/", {
+                        user: this.props.User,
+                        history: this.props.history
+                    });
+                }
+            }, 1);
+        }
     }
 
     render() {
@@ -38,23 +50,36 @@ class ChatInput extends React.Component {
             if (answers)
                 inputFields = answers.map((answer, index) => {
                     if (answer.elementTag === "input") {
-                        return <div className="chat-input-group" key={answer.key}>
-                            <label htmlFor={answer.key}>{answer.text}</label>
-                            <input autoFocus={index===0} ref={answer.key} id={answer.key} type={answer.inputType}/>
-                        </div>
+                        if (answer.inputType === "checkbox") {
+                            return answer.options.map((option) => {
+                                return <div className="chat-input-group" key={option.value}>
+                                    <label htmlFor={option.value}>{option.text}</label>
+                                    <input ref={option.value} key={option.value} id={option.value} name={option.value}
+                                           value={option.text}
+                                           type={answer.inputType}/>
+                                </div>
+                            });
+                        }
+                        else {
+                            return <div className="chat-input-group" key={answer.key}>
+                                <label htmlFor={answer.key}>{answer.text}</label>
+                                <input autoFocus={index === 0} ref={answer.key} id={answer.key}
+                                       type={answer.inputType}/>
+                            </div>
+                        }
                     } else if (answer.elementTag === "textarea") {
                         return <div className="chat-input-group" key={answer.key}>
                             <label htmlFor={answer.key}>{answer.text}</label>
-                            <textarea autoFocus={index===0} ref={answer.key} id={answer.key} type={answer.inputType}/>
+                            <textarea autoFocus={index === 0} ref={answer.key} id={answer.key} type={answer.inputType}/>
                         </div>
                     } else if (answer.elementTag === "select") {
                         const options = answer.options.map((option) => {
                             return <option key={option.value} value={option.value}>{option.text}</option>
                         });
-                        const attr = answer.attr;
                         return <div className="chat-input-group" key={answer.key}>
                             <label htmlFor={answer.key}>{answer.text}</label>
-                            <select autoFocus={index===0} ref={answer.key} id={answer.key} type={answer.inputType} {...attr}>
+                            <select autoFocus={index === 0} ref={answer.key} id={answer.key}
+                                    type={answer.inputType}>
                                 {options}
                             </select>
                         </div>
@@ -63,17 +88,38 @@ class ChatInput extends React.Component {
         }
 
         return (
-            <div className="chat-input">
-                <form ref="chatForm" onSubmit={this.handleFormSubmit.bind(this)}>
-                    { inputFields ? inputFields : ""}
-                    {
-                        !isCompleted
-                            ? <input type="submit" value="Send"/>
-                            : ""
-                    }
-                </form>
-            </div>
+            <form className="chat-input" ref="chatForm" onSubmit={this.handleFormSubmit.bind(this)}>
+                {
+                    !isCompleted
+                        ?
+                        <button disabled={!this._hasUserHistory()} onClick={this._goBack.bind(this)} type="button">
+                            Rewind Time</button>
+                        : ""
+                }
+                <div className="input-fields">{ inputFields ? inputFields : ""}</div>
+                {
+                    !isCompleted
+                        ? <input type="submit" value="Continue"/>
+                        : ""
+                }
+            </form>
         );
+    }
+
+    _hasUserHistory() {
+        let onlyBotMessages = true;
+        this.props.history.forEach((message) => {
+            if (message.isBot === false) {
+                onlyBotMessages = false;
+            }
+        });
+        return !onlyBotMessages;
+    }
+
+    _goBack() {
+        if (this._hasUserHistory()) {
+            this.props.goBack();
+        }
     }
 
     _getCurrentQuestion() {
@@ -88,12 +134,29 @@ class ChatInput extends React.Component {
         const currentQuestion = this._getCurrentQuestion();
         currentQuestion.answers.forEach((answer) => {
             if (answer.required && this.refs[answer.key].value === "") {
-                const botHistoryItem = (
-                    <div className="bot-error-message">
-                        <p>An answer for {answer.text} is required.</p>
-                    </div>
-                );
-                this.props.setErrorMessage(botHistoryItem);
+                let randomizer = Math.random() * 3;
+                if (randomizer > 2) {
+                    this.props.addToChatHistory({
+                        text: " " + answer.text + " " + "is required.",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                else if (randomizer > 1) {
+                    this.props.addToChatHistory({
+                        text: "Whoops! " + answer.text + " is required.",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+                else {
+                    this.props.addToChatHistory({
+                        text: "Shucks! " + answer.text + " is required.",
+                        isBot: true,
+                        isError: true
+                    });
+                }
+
                 isValid = false;
             }
         });
@@ -104,7 +167,22 @@ class ChatInput extends React.Component {
         const currentQuestion = this._getCurrentQuestion();
         currentQuestion.answers.forEach((answer) => {
             const methodKey = "setUser" + this._capitalize(answer.key);
-            this.props[methodKey](this.refs[answer.key].value);
+
+
+            let paramValue = "";
+            if (answer.inputType === "checkbox") {
+                paramValue = answer.options.reduce((acc, option) => {
+                    console.log(option, acc)
+                    if (this.refs[option.value].checked) {
+                        acc = acc.concat(this.refs[option.value].value)
+                    }
+                    return acc;
+                }, []);
+            }
+            else {
+                paramValue = this.refs[answer.key].value;
+            }
+            this.props[methodKey](paramValue);
         });
     }
 
@@ -113,23 +191,43 @@ class ChatInput extends React.Component {
         const currentQuestionId = this.props.questionOrder[qIndex];
         const currentQuestion = this.props.questions[currentQuestionId];
 
-        const botHistoryItem = (
-            <div key={currentQuestionId + new Date().getTime()} className="bot-message">
-                <p>{currentQuestion.text}</p>
-            </div>
-        );
-        this.props.addToChatHistory(botHistoryItem);
-
-        const userHistoryItems = currentQuestion.answers.map((answer) => {
-
-            return (
-                <div key={answer.key} className="user-message">
-                    <p>{answer.text}</p>
-                    <p>{this.refs[answer.key].value}</p>
-                </div>
-            );
+        currentQuestion.answers.forEach((answer) => {
+            if (answer.inputType === "checkbox") {
+                let message = answer.text + ":";
+                answer.options.forEach((option) => {
+                    if (this.refs[option.value].checked) {
+                        message += " " + this.refs[option.value].value
+                    }
+                });
+                this.props.addToChatHistory({
+                    text: message,
+                    isBot: false
+                });
+            }
+            else {
+                if (this.refs[answer.key].value) {
+                    this.props.addToChatHistory({
+                        text: answer.text + " " + this.refs[answer.key].value,
+                        isBot: false
+                    });
+                }
+            }
         });
-        this.props.addToChatHistory(userHistoryItems);
+
+        if ((qIndex + 1) !== this.props.questionOrder.length) {
+            const nextQuestionId = this.props.questionOrder[qIndex + 1];
+            const nextQuestion = this.props.questions[nextQuestionId];
+            this.props.addToChatHistory({
+                text: nextQuestion.text,
+                isBot: true
+            });
+        }
+        else {
+            this.props.addToChatHistory({
+                text: this.props.completedMessage,
+                isBot: true
+            });
+        }
     }
 
     _capitalize(string) {
@@ -139,16 +237,18 @@ class ChatInput extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        questionOrder: state.ChatScript.questionOrder,
-        questions: state.ChatScript.questions,
-        activeQuestionIndex: state.ChatScript.activeQuestionIndex,
+        questionOrder: state.ChatScript.present.questionOrder,
+        questions: state.ChatScript.present.questions,
+        history: state.ChatScript.present.history,
+        activeQuestionIndex: state.ChatScript.present.activeQuestionIndex,
+        completedMessage: state.ChatScript.present.completedMessage,
+        User: state.User,
     }
 }
 function mapDispatchToProps(dispatch) {
     return {
         addToChatHistory: (chatObject) => dispatch(addToChatHistory(chatObject)),
         setActiveQuestionIndex: (activeIndex) => dispatch(setActiveQuestionIndex(activeIndex)),
-        setErrorMessage: (errorMessage) => dispatch(setErrorMessage(errorMessage)),
         setUserFirstName: (firstName) => dispatch(setUserFirstName(firstName)),
         setUserLastName: (lastName) => dispatch(setUserLastName(lastName)),
         setUserEmail: (email) => dispatch(setUserEmail(email)),
@@ -158,6 +258,9 @@ function mapDispatchToProps(dispatch) {
         setUserMovingReasons: (reasons) => dispatch(setUserMovingReasons(reasons)),
         setUserMovingReasonOther: (otherReason) => dispatch(setUserMovingReasonOther(otherReason)),
         setUserAmenities: (amenities) => dispatch(setUserAmenities(amenities)),
+        setUserPets: (pets) => dispatch(setUserPets(pets)),
+        goBack: () => dispatch(goBack()),
+        saveState: () => dispatch(saveState()),
     }
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ChatInput);

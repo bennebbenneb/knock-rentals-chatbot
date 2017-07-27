@@ -52,6 +52,12 @@ const User = {
             type: "SET_USER_AMENITIES",
             payload: amenities
         }
+    },
+    setUserPets: (pets) => {
+        return {
+            type: "SET_USER_PETS",
+            payload: pets
+        }
     }
 };
 module.exports = User;

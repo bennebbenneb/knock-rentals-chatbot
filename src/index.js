@@ -1,18 +1,27 @@
-let express = require('express');
+const express = require('express');
+const path = require("path");
+const compression = require('compression');
+const app = express();
 const mongoDBPromise = require('./database/mongodb');
-let compression = require('compression');
-let path = require("path");
-let app = express();
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.urlencoded({extended: true})); // support encoded bodies
 app.use(compression({level: 9}));
 
 // store the chathistory
 app.post("/service/chatbot/", (req, res) => {
+    let userChatLog = req.body.userChatLog;
+    console.log()
     mongoDBPromise.then((db) => {
         db.collection("chatbot").insertOne({
                 test: "test"
             },
             (err, result) => {
-                console.log("inserted");
+                if (err) {
+                    res.status(500);
+                }
+                res.send(JSON.stringify({}));
             }
         );
     });
