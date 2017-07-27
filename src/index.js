@@ -14,6 +14,15 @@ app.post("/service/chatbot/", (req, res) => {
     const history = req.body.history;
     const user = req.body.user;
     mongoDBPromise.then((db) => {
+
+        let ipAddr = req.headers["x-forwarded-for"];
+        if (ipAddr){
+            const list = ipAddr.split(",");
+            ipAddr = list[list.length-1];
+        } else {
+            ipAddr = req.connection.remoteAddress;
+        }
+        user.ip = ipAddr;
         db.collection("chatbot").insertOne({
                 history:history,
                 user:user
