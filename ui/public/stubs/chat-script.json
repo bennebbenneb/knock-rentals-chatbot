@@ -45,7 +45,7 @@
       ]
     },
     "phone": {
-      "text": "Looking good, the next thing we'll need is a phone number were you can be reached.",
+      "text": "Looking good, the next thing we'll need is a phone number where you can be reached.",
       "answers": [
         {
           "key": "phone",
