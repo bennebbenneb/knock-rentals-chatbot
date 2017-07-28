@@ -1,4 +1,90 @@
 {
+  "startingKey": "name",
+  "questionMatrix": [
+    {
+      "key": "name",
+      "possibilities": [
+        {
+          "key": "emailFullName",
+          "requirements": [
+            {
+              "key": "firstName",
+              "required": true,
+              "valid": true
+            },
+            {
+              "key": "lastName",
+              "required": true,
+              "valid": true
+            }
+          ]
+        },
+        {
+          "key": "email",
+          "requirements": [
+            {
+              "key": "firstName",
+              "required": true,
+              "valid": true
+            }
+          ]
+        },
+        {
+          "key": "invalidName",
+          "requirements": [
+            {
+              "key": "firstName",
+              "required": true,
+              "valid": false
+            }
+          ]
+        },
+        {
+          "key": "missingName",
+          "requirements": [
+            {
+              "key": "firstName",
+              "required": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "key": "email",
+      "possibilities": [
+        {
+          "key": "phone",
+          "requirements": [
+            {
+              "key": "email",
+              "required": true,
+              "valid": true
+            }
+          ]
+        },
+        {
+          "key": "invalidEmail",
+          "requirements": [
+            {
+              "key": "email",
+              "required": true,
+              "valid": false
+            }
+          ]
+        },
+        {
+          "key": "missingEmail",
+          "requirements": [
+            {
+              "key": "email",
+              "required": false
+            }
+          ]
+        }
+      ]
+    }
+  ],
   "questionOrder": [
     "name",
     "email",
