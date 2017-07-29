@@ -5,17 +5,11 @@
       "key": "name",
       "possibilities": [
         {
-          "key": "emailFullName",
+          "key": "questionForBen",
           "requirements": [
             {
               "key": "firstName",
-              "required": true,
-              "valid": true
-            },
-            {
-              "key": "lastName",
-              "required": true,
-              "valid": true
+              "value":"Ben"
             }
           ]
         },
