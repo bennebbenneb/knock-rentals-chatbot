@@ -139,21 +139,24 @@ class ChatInput extends React.Component {
                     this.props.addToChatHistory({
                         text: " " + answer.text + " " + "is required.",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 else if (randomizer > 1) {
                     this.props.addToChatHistory({
                         text: "Whoops! " + answer.text + " is required.",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 else {
                     this.props.addToChatHistory({
                         text: "Shucks! " + answer.text + " is required.",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
 
@@ -177,21 +180,24 @@ class ChatInput extends React.Component {
                     this.props.addToChatHistory({
                         text: "Make sure to enter your full 10 digit phone number",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 else if (randomizer > 1) {
                     this.props.addToChatHistory({
                         text: "I think you're missing some numbers",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 else {
                     this.props.addToChatHistory({
                         text: "Whoops! You're missing some numbers",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 return false;
@@ -201,21 +207,24 @@ class ChatInput extends React.Component {
                     this.props.addToChatHistory({
                         text: "A 555 number? I see...",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 else if (randomizer > 1) {
                     this.props.addToChatHistory({
                         text: "Did you get this number from a movie by chance?",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 else {
                     this.props.addToChatHistory({
                         text: "We need a valid phone number",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 return false;
@@ -228,21 +237,24 @@ class ChatInput extends React.Component {
                     this.props.addToChatHistory({
                         text: "That email doesn't look quite right.",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 else if (randomizer > 1) {
                     this.props.addToChatHistory({
                         text: "Are you sure that's your email?",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 else {
                     this.props.addToChatHistory({
                         text: "Fix the issue with your email before we go on.",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 return false;
@@ -254,7 +266,8 @@ class ChatInput extends React.Component {
                 this.props.addToChatHistory({
                     text: "That's not a valid date. Try this format, MM/DD/YYYY",
                     isBot: true,
-                    isError: true
+                    isError: true,
+                    timestamp:new Date().getTime()
                 });
                 return false;
             }
@@ -273,7 +286,8 @@ class ChatInput extends React.Component {
                     this.props.addToChatHistory({
                         text: "Please choose a date at least one full day from today.",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
 
@@ -281,14 +295,16 @@ class ChatInput extends React.Component {
                     this.props.addToChatHistory({
                         text: "That's too soon.",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 else {
                     this.props.addToChatHistory({
                         text: "We need more notice.",
                         isBot: true,
-                        isError: true
+                        isError: true,
+                        timestamp:new Date().getTime()
                     });
                 }
                 return false;
@@ -325,7 +341,7 @@ class ChatInput extends React.Component {
 
         currentQuestion.answers.forEach((answer) => {
             if (answer.inputType === "checkbox") {
-                let message = answer.text + ":";
+                let message = "";
                 answer.options.forEach((option) => {
                     if (this.refs[option.value].checked) {
                         message += " " + this.refs[option.value].value
@@ -333,14 +349,16 @@ class ChatInput extends React.Component {
                 });
                 this.props.addToChatHistory({
                     text: message,
-                    isBot: false
+                    isBot: false,
+                    timestamp:new Date().getTime()
                 });
             }
             else {
                 if (this.refs[answer.key].value) {
                     this.props.addToChatHistory({
-                        text: answer.text + " " + this.refs[answer.key].value,
-                        isBot: false
+                        text: this.refs[answer.key].value,
+                        isBot: false,
+                        timestamp:new Date().getTime()
                     });
                 }
             }
@@ -349,15 +367,14 @@ class ChatInput extends React.Component {
         if ((qIndex + 1) !== this.props.questionOrder.length) {
             const nextQuestionId = this.props.questionOrder[qIndex + 1];
             const nextQuestion = this.props.questions[nextQuestionId];
-            this.props.addToChatHistory({
-                text: nextQuestion.text,
-                isBot: true
-            });
+
+            this.props.addToChatHistory({...nextQuestion, isBot: true, timestamp:new Date().getTime()});
         }
         else {
             this.props.addToChatHistory({
                 text: this.props.completedMessage,
-                isBot: true
+                isBot: true,
+                timestamp:new Date().getTime()
             });
         }
     }

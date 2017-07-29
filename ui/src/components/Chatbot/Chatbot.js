@@ -17,10 +17,7 @@ class Chatbot extends React.Component {
                 const currentQuestionId = response.data.questionOrder[0];
                 const currentQuestion = response.data.questions[currentQuestionId];
 
-                this.props.addToChatHistory({
-                    isBot: true,
-                    text:currentQuestion.text
-                });
+                this.props.addToChatHistory({...currentQuestion, isBot: true, timestamp:new Date().getTime()});
             })
             .catch((error) => {
             });

@@ -97,7 +97,7 @@
   ],
   "questions": {
     "name": {
-      "text": "I see you're interested in renting an apartment. I'll need to collect some information first. What is your name?",
+      "text": "I see you're interested in renting an apartment. 😀 I'll need to collect some information first. What is your name?",
       "answers": [
         {
           "key": "firstName",
@@ -118,7 +118,7 @@
       ]
     },
     "email": {
-      "text": "Thanks {firstName}, the next thing we'll need is your email address.",
+      "text": "Thanks {firstName}, the next thing we'll need is your email address. 📧",
       "answers": [
         {
           "key": "email",
@@ -131,7 +131,7 @@
       ]
     },
     "phone": {
-      "text": "Looking good, the next thing we'll need is a phone number where you can be reached.",
+      "text": "Looking good, the next thing we'll need is a phone number where you can be reached. 📱",
       "answers": [
         {
           "key": "phone",
@@ -144,7 +144,7 @@
       ]
     },
     "movingDate": {
-      "text": "Great, so when are you planning to move?",
+      "text": "Great, so when are you planning to move? 📆",
       "answers": [
         {
           "key": "movingDate",
