@@ -19,7 +19,7 @@ import {
 class ChatInput extends React.Component {
     handleFormSubmit(event) {
         event.preventDefault();
-        this.props.saveState()
+        this.props.saveState();
         if (this._isValid()) {
             this._addToHistory();
             this._saveUserInfo();
@@ -63,14 +63,14 @@ class ChatInput extends React.Component {
                         else {
                             return <div className="chat-input-group" key={answer.key}>
                                 <label htmlFor={answer.key}>{answer.text}</label>
-                                <input autoFocus={index === 0} ref={answer.key} id={answer.key}
+                                <input ref={answer.key} id={answer.key}
                                        type={answer.inputType}/>
                             </div>
                         }
                     } else if (answer.elementTag === "textarea") {
                         return <div className="chat-input-group" key={answer.key}>
                             <label htmlFor={answer.key}>{answer.text}</label>
-                            <textarea autoFocus={index === 0} ref={answer.key} id={answer.key} type={answer.inputType}/>
+                            <textarea ref={answer.key} id={answer.key} type={answer.inputType}/>
                         </div>
                     } else if (answer.elementTag === "select") {
                         const options = answer.options.map((option) => {
@@ -78,7 +78,7 @@ class ChatInput extends React.Component {
                         });
                         return <div className="chat-input-group" key={answer.key}>
                             <label htmlFor={answer.key}>{answer.text}</label>
-                            <select autoFocus={index === 0} ref={answer.key} id={answer.key}
+                            <select ref={answer.key} id={answer.key}
                                     type={answer.inputType}>
                                 {options}
                             </select>
