@@ -91,7 +91,7 @@
   ],
   "questions": {
     "name": {
-      "text": "I see you're interested in renting an apartment. 😀 I'll need to collect some information first. What is your name?",
+      "text": "I see you're interested in renting an apartment. ☺ I'll need to collect some information first. What is your name?",
       "answers": [
         {
           "key": "firstName",
@@ -151,7 +151,7 @@
       ]
     },
     "bedrooms": {
-      "text": "How many bedrooms are you looking for?",
+      "text": "How many bedrooms 🚪 are you looking for?",
       "answers": [
         {
           "key": "bedrooms",
@@ -239,7 +239,7 @@
       ]
     },
     "pets": {
-      "text": "How many pets will you be bring with you?",
+      "text": "How many pets will you be bring with you? 🐶 🐩 🐱 🐎 🐑 🐘",
       "answers": [
         {
           "key": "pets",
