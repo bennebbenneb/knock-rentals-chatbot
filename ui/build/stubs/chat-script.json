@@ -9,7 +9,72 @@
           "requirements": [
             {
               "key": "firstName",
-              "value":"Ben"
+              "value": {
+                "type": "string",
+                "exactMatch": "Ben"
+              }
+            }
+          ]
+        },
+        {
+          "key": "questionForBenjamin",
+          "requirements": [
+            {
+              "key": "firstName",
+              "value": {
+                "type": "string",
+                "exactMatch": "Benjamin",
+                "exactMatchAtLeastOne": [
+                  "Benjamin",
+                  "benjamin",
+                  "Bob"
+                ],
+                "notExactMatch": "Ben",
+                "notExactMatchAtLeastOne": [
+                  "Joe",
+                  "Bob"
+                ],
+                "contains": "Benjam",
+                "containsAll": [
+                  "Ben",
+                  "jamin"
+                ],
+                "containsAtLeastOne": [
+                  "Ben",
+                  "zzzza",
+                  "qqqqwwww"
+                ],
+                "containsOnlyOne": [
+                  "Ben",
+                  "Bob",
+                  "Joe"
+                ],
+                "notContains": "Been",
+                "notContainsAll": [
+                  "Billy",
+                  "Joe"
+                ],
+                "notContainsAtLeastOne": [
+                  "beeen",
+                  "jaaam",
+                  "mon"
+                ],
+                "notContainsOnlyOne": [
+                  "Ben",
+                  "jam",
+                  "on"
+                ],
+                "startWith": "Ben",
+                "startWithAtLeastOne": [
+                  "Ben",
+                  "ben"
+                ],
+                "notStartWith": "Joe",
+                "notStartWithAtLeastOne": [
+                  "adsffdsa",
+                  "asdfads"
+                ]
+              }
             }
           ]
         },
