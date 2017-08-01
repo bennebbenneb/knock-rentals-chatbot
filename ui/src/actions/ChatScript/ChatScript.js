@@ -29,6 +29,24 @@ const ChatScript = {
             payload: completedMessage
         }
     },
+    setIsBotTyping: (isBotTypig) => {
+        return {
+            type: "SET_IS_BOT_TYPING",
+            payload: isBotTypig
+        }
+    },
+    setDisableFormInput: (isDisabled) => {
+        return {
+            type: "SET_DISABLE_FORM_INPUT",
+            payload: isDisabled
+        }
+    },
+    setAnswer: (answer) => {
+        return {
+            type: "SET_ANSWER",
+            payload: answer
+        }
+    },
     goBack: () => {
         return {
             type: "GO_BACK"

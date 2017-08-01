@@ -1,6 +1,6 @@
 @import "./ChatDisplay/ChatDisplay";
 @import "./ChatInput/ChatInput";
 .chatbot{
-  height:100vh;
-
+  display: flex;
+  flex-flow: column;
 }

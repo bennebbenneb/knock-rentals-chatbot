@@ -11,8 +11,6 @@ app.use(compression({level: 9}));
 
 // store the chathistory
 app.post("/service/chatbot/", (req, res) => {
-    const history = req.body.history;
-    const user = req.body.user;
     mongoDBPromise.then((db) => {
 
         let ipAddr = req.headers["x-forwarded-for"];
@@ -22,14 +20,11 @@ app.post("/service/chatbot/", (req, res) => {
         } else {
             ipAddr = req.connection.remoteAddress;
         }
-        db.collection("chatbot").insertOne({
-                history: history,
-                user: user,
-                analytics: {
-                    ipAddress: ipAddr,
-                    userAgent: req.headers['user-agent']
-                }
-            },
+        db.collection("chatbot").insertOne(
+            Object.assign(req.body,{
+                ipAddress: ipAddr,
+                userAgent: req.headers['user-agent']
+            }),
             (err, result) => {
                 if (err) {
                     res.status(500);

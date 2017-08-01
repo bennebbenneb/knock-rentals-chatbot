@@ -159,18 +159,16 @@
       "text": "I see you're interested in renting an apartment. ☺ I'll need to collect some information first. What is your name?",
       "answers": [
         {
+          "type":"Text",
           "key": "firstName",
           "text": "First Name",
-          "elementTag": "input",
-          "inputType": "text",
           "validation": false,
           "required": true
         },
         {
+          "type":"Text",
           "key": "lastName",
           "text": "Last Name",
-          "elementTag": "input",
-          "inputType": "text",
           "validation": false,
           "required": false
         }
@@ -180,10 +178,9 @@
       "text": "Thanks {firstName}, the next thing we'll need is your email address. 📧",
       "answers": [
         {
+          "type":"Email",
           "key": "email",
           "text": "Email",
-          "elementTag": "input",
-          "inputType": "email",
           "validation": "email",
           "required": true
         }
@@ -193,10 +190,9 @@
       "text": "Looking good, the next thing we'll need is a phone number where you can be reached. 📱",
       "answers": [
         {
+          "type":"Phone",
           "key": "phone",
           "text": "Phone Number",
-          "elementTag": "input",
-          "inputType": "tel",
           "validation": "tel",
           "required": true
         }
@@ -206,10 +202,9 @@
       "text": "Great, so when are you planning to move? 📆",
       "answers": [
         {
+          "type":"DateInput",
           "key": "movingDate",
           "text": "Moving Date",
-          "elementTag": "input",
-          "inputType": "date",
           "validation": "date",
           "required": true
         }
@@ -219,9 +214,9 @@
       "text": "How many bedrooms 🚪 are you looking for?",
       "answers": [
         {
+          "type":"Select",
           "key": "bedrooms",
           "text": "Bedrooms",
-          "elementTag": "select",
           "options": [
             {
               "value": "",
@@ -265,10 +260,9 @@
       "text": "What are your reasons for moving? You can choose more than one reason.",
       "answers": [
         {
+          "type":"Checkbox",
           "key": "movingReasons",
           "text": "Moving Reasons",
-          "elementTag": "input",
-          "inputType": "checkbox",
           "options": [
             {
               "value": "work",
@@ -295,9 +289,9 @@
           "required": false
         },
         {
+          "type":"Textarea",
           "key": "movingReasonOther",
           "text": "Other Reasons",
-          "elementTag": "textarea",
           "validation": false,
           "required": false
         }
@@ -307,9 +301,9 @@
       "text": "How many pets will you be bring with you? 🐶 🐩 🐱 🐎 🐑 🐘",
       "answers": [
         {
+          "type":"Select",
           "key": "pets",
           "text": "Pets",
-          "elementTag": "select",
           "options": [
             {
               "value": "",
@@ -353,10 +347,9 @@
       "text": "Last question, what amenities are you looking for?",
       "answers": [
         {
+          "type":"Checkbox",
           "key": "amenities",
           "text": "Amenities",
-          "elementTag": "input",
-          "inputType": "checkbox",
           "options": [
             {
               "value": "balcony",

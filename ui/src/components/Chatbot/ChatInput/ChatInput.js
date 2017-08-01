@@ -1,7 +1,14 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import axios from 'axios'
-import {addToChatHistory, setActiveQuestionIndex, goBack, saveState} from "../../../actions/ChatScript/ChatScript";
+import {
+    addToChatHistory,
+    setActiveQuestionIndex,
+    goBack,
+    saveState,
+    setIsBotTyping,
+    setDisableFormInput
+} from "../../../actions/ChatScript/ChatScript";
 import {
     setUserFirstName,
     setUserLastName,
@@ -15,28 +22,56 @@ import {
     setUserPets
 
 } from "../../../actions/User/User";
+import Checkbox from "./Checkbox/Checkbox";
+import Text from "./Text/Text";
+import Email from "./Email/Email";
+import Phone from "./Phone/Phone";
+import Textarea from "./Textarea/Textarea";
+import DateInput from "./DateInput/DateInput";
+import Select from "./Select/Select";
 
 class ChatInput extends React.Component {
+
+    constructor() {
+        super();
+        this.inputTypes = {Checkbox, Text, Email, Phone, Textarea, DateInput, Select}
+        new Date();
+    }
+
     handleFormSubmit(event) {
         event.preventDefault();
         this.props.saveState();
+        this.props.setDisableFormInput(true);
+        this._addUserText();
         if (this._isValid()) {
-            this._addToHistory();
-            this._saveUserInfo();
-            this.props.setActiveQuestionIndex(this.props.activeQuestionIndex + 1);
+
+            setTimeout(() => {
+                this.props.setIsBotTyping(true);
+            }, 500);
+
+
+            setTimeout(() => {
+                this.props.setIsBotTyping(false);
+                setTimeout(() => {
+                    this._addBotText();
+                    this.props.setActiveQuestionIndex(this.props.activeQuestionIndex + 1);
+                    this.props.setDisableFormInput(false);
+                }, 500);
+            }, 4000);
+
+        }
+        else {
+            this.props.setDisableFormInput(false);
         }
 
-        const isCompleted = (this.props.activeQuestionIndex + 1) === this.props.questionOrder.length;
+        const isCompleted = (this.props.activeQuestionIndex +1 ) === this.props.questionOrder.length;
+        console.log("isCompleted")
+        console.log(isCompleted)
         if (isCompleted) {
-            setTimeout(() => {
-                const isCompleted = this.props.activeQuestionIndex === this.props.questionOrder.length;
-                if (isCompleted) {
-                    axios.post("/service/chatbot/", {
-                        user: this.props.User,
-                        history: this.props.history
-                    });
-                }
-            }, 1);
+            axios.post("/service/chatbot/", {
+                answers: this.props.answers,
+                history: this.props.history
+            });
         }
     }
 
@@ -48,42 +83,11 @@ class ChatInput extends React.Component {
             const answers = currentQuestion.answers;
 
             if (answers)
-                inputFields = answers.map((answer, index) => {
-                    if (answer.elementTag === "input") {
-                        if (answer.inputType === "checkbox") {
-                            return answer.options.map((option) => {
-                                return <div className="chat-input-group" key={option.value}>
-                                    <label htmlFor={option.value}>{option.text}</label>
-                                    <input ref={option.value} key={option.value} id={option.value} name={option.value}
-                                           value={option.text}
-                                           type={answer.inputType}/>
-                                </div>
-                            });
-                        }
-                        else {
-                            return <div className="chat-input-group" key={answer.key}>
-                                <label htmlFor={answer.key}>{answer.text}</label>
-                                <input ref={answer.key} id={answer.key}
-                                       type={answer.inputType}/>
-                            </div>
-                        }
-                    } else if (answer.elementTag === "textarea") {
-                        return <div className="chat-input-group" key={answer.key}>
-                            <label htmlFor={answer.key}>{answer.text}</label>
-                            <textarea ref={answer.key} id={answer.key} type={answer.inputType}/>
-                        </div>
-                    } else if (answer.elementTag === "select") {
-                        const options = answer.options.map((option) => {
-                            return <option key={option.value} value={option.value}>{option.text}</option>
-                        });
-                        return <div className="chat-input-group" key={answer.key}>
-                            <label htmlFor={answer.key}>{answer.text}</label>
-                            <select ref={answer.key} id={answer.key}
-                                    type={answer.inputType}>
-                                {options}
-                            </select>
-                        </div>
-                    }
+                inputFields = answers.map((answer) => {
+                    const Answertype = this.inputTypes[answer.type];
+                    return (
+                        <Answertype key={answer.key} answer={answer} questionId={this._getCurrentQuestionId()}/>
+                    );
                 })
         }
 
@@ -92,14 +96,15 @@ class ChatInput extends React.Component {
                 {
                     !isCompleted
                         ?
-                        <button disabled={!this._hasUserHistory()} onClick={this._goBack.bind(this)} type="button">
+                        <button disabled={!this._hasUserHistory() || this.props.isFormDisabled}
+                                onClick={this._goBack.bind(this)} type="button">
                             Rewind Time</button>
                         : ""
                 }
-                <div className="input-fields">{ inputFields ? inputFields : ""}</div>
+                <div className="input-fields">{inputFields ? inputFields : ""}</div>
                 {
                     !isCompleted
-                        ? <input type="submit" value="Continue"/>
+                        ? <input disabled={this.props.isFormDisabled} type="submit" value="Continue"/>
                         : ""
                 }
             </form>
@@ -122,25 +127,19 @@ class ChatInput extends React.Component {
         }
     }
 
-    _getCurrentQuestion() {
-        const qIndex = this.props.activeQuestionIndex;
-        const currentQuestionId = this.props.questionOrder[qIndex];
-        const currentQuestion = this.props.questions[currentQuestionId];
-        return currentQuestion;
-    }
 
     _isValid() {
         let isValid = true;
         const currentQuestion = this._getCurrentQuestion();
         currentQuestion.answers.forEach((answer) => {
-            if (answer.required && this.refs[answer.key].value === "") {
+            if (answer.required && this.props.answers[this._getCurrentQuestionId()][answer.key].value === "") {
                 let randomizer = Math.random() * 3;
                 if (randomizer > 2) {
                     this.props.addToChatHistory({
                         text: " " + answer.text + " " + "is required.",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 else if (randomizer > 1) {
@@ -148,7 +147,7 @@ class ChatInput extends React.Component {
                         text: "Whoops! " + answer.text + " is required.",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 else {
@@ -156,7 +155,7 @@ class ChatInput extends React.Component {
                         text: "Shucks! " + answer.text + " is required.",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
 
@@ -164,7 +163,7 @@ class ChatInput extends React.Component {
             }
 
             if (answer.validation) {
-                isValid = isValid && this._validator(answer.validation, this.refs[answer.key].value);
+                isValid = isValid && this._validator(answer.validation, this.props.answers[this._getCurrentQuestionId()][answer.key].text);
             }
         });
         return isValid;
@@ -181,7 +180,7 @@ class ChatInput extends React.Component {
                         text: "Make sure to enter your full 10 digit phone number",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 else if (randomizer > 1) {
@@ -189,7 +188,7 @@ class ChatInput extends React.Component {
                         text: "I think you're missing some numbers",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 else {
@@ -197,7 +196,7 @@ class ChatInput extends React.Component {
                         text: "Whoops! You're missing some numbers",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 return false;
@@ -208,7 +207,7 @@ class ChatInput extends React.Component {
                         text: "A 555 number? I see...",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 else if (randomizer > 1) {
@@ -216,7 +215,7 @@ class ChatInput extends React.Component {
                         text: "Did you get this number from a movie by chance?",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 else {
@@ -224,7 +223,7 @@ class ChatInput extends React.Component {
                         text: "We need a valid phone number",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 return false;
@@ -238,7 +237,7 @@ class ChatInput extends React.Component {
                         text: "That email doesn't look quite right.",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 else if (randomizer > 1) {
@@ -246,7 +245,7 @@ class ChatInput extends React.Component {
                         text: "Are you sure that's your email?",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 else {
@@ -254,7 +253,7 @@ class ChatInput extends React.Component {
                         text: "Fix the issue with your email before we go on.",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 return false;
@@ -267,7 +266,7 @@ class ChatInput extends React.Component {
                     text: "That's not a valid date. Try this format, MM/DD/YYYY",
                     isBot: true,
                     isError: true,
-                    timestamp:new Date().getTime()
+                    timestamp: new Date().getTime()
                 });
                 return false;
             }
@@ -287,7 +286,7 @@ class ChatInput extends React.Component {
                         text: "Please choose a date at least one full day from today.",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
 
@@ -296,7 +295,7 @@ class ChatInput extends React.Component {
                         text: "That's too soon.",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 else {
@@ -304,7 +303,7 @@ class ChatInput extends React.Component {
                         text: "We need more notice.",
                         isBot: true,
                         isError: true,
-                        timestamp:new Date().getTime()
+                        timestamp: new Date().getTime()
                     });
                 }
                 return false;
@@ -313,74 +312,63 @@ class ChatInput extends React.Component {
         return true;
     }
 
-    _saveUserInfo() {
+    _addToHistory() {
+        this._addUserText();
+        this._addBotText();
+    }
+
+    _addUserText() {
         const currentQuestion = this._getCurrentQuestion();
-        currentQuestion.answers.forEach((answer) => {
-            const methodKey = "setUser" + this._capitalize(answer.key);
-            let paramValue = "";
-            if (answer.inputType === "checkbox") {
-                paramValue = answer.options.reduce((acc, option) => {
-                    console.log(option, acc)
-                    if (this.refs[option.value].checked) {
-                        acc = acc.concat(this.refs[option.value].value)
-                    }
+        const message = currentQuestion.answers.reduce((acc, answer) => {
+            let text = "";
+            if (answer.type === "Checkbox") {
+                text = answer.options.reduce((acc, option) => {
+                    acc += option.text + " ";
                     return acc;
-                }, []);
+                }, "") + " ";
             }
             else {
-                paramValue = this.refs[answer.key].value;
+                text = this.props.answers[this._getCurrentQuestionId()][answer.key].text + " ";
             }
-            this.props[methodKey](paramValue);
+            acc += text;
+            return acc;
+        }, "");
+
+        this.props.addToChatHistory({
+            text: message,
+            isBot: false,
+            timestamp: new Date().getTime()
         });
     }
 
-    _addToHistory() {
+    _addBotText() {
         const qIndex = this.props.activeQuestionIndex;
-        const currentQuestionId = this.props.questionOrder[qIndex];
-        const currentQuestion = this.props.questions[currentQuestionId];
-
-        currentQuestion.answers.forEach((answer) => {
-            if (answer.inputType === "checkbox") {
-                let message = "";
-                answer.options.forEach((option) => {
-                    if (this.refs[option.value].checked) {
-                        message += " " + this.refs[option.value].value
-                    }
-                });
-                this.props.addToChatHistory({
-                    text: message,
-                    isBot: false,
-                    timestamp:new Date().getTime()
-                });
-            }
-            else {
-                if (this.refs[answer.key].value) {
-                    this.props.addToChatHistory({
-                        text: this.refs[answer.key].value,
-                        isBot: false,
-                        timestamp:new Date().getTime()
-                    });
-                }
-            }
-        });
 
         if ((qIndex + 1) !== this.props.questionOrder.length) {
             const nextQuestionId = this.props.questionOrder[qIndex + 1];
             const nextQuestion = this.props.questions[nextQuestionId];
 
-            this.props.addToChatHistory({...nextQuestion, isBot: true, timestamp:new Date().getTime()});
+            this.props.addToChatHistory({...nextQuestion, isBot: true, timestamp: new Date().getTime()});
         }
         else {
             this.props.addToChatHistory({
                 text: this.props.completedMessage,
                 isBot: true,
-                timestamp:new Date().getTime()
+                timestamp: new Date().getTime()
             });
         }
     }
 
-    _capitalize(string) {
-        return string.charAt(0).toUpperCase() + string.slice(1);
+    _getCurrentQuestion() {
+        const currentQuestionId = this._getCurrentQuestionId();
+        const currentQuestion = this.props.questions[currentQuestionId];
+        return currentQuestion;
+    }
+
+    _getCurrentQuestionId() {
+        const qIndex = this.props.activeQuestionIndex;
+        const currentQuestionId = this.props.questionOrder[qIndex];
+        return currentQuestionId;
     }
 }
 
@@ -392,12 +380,17 @@ function mapStateToProps(state) {
         activeQuestionIndex: state.ChatScript.present.activeQuestionIndex,
         completedMessage: state.ChatScript.present.completedMessage,
         User: state.User,
+        answers: state.ChatScript.present.answers,
+        isFormDisabled: state.ChatScript.present.isFormDisabled
     }
 }
+
 function mapDispatchToProps(dispatch) {
     return {
         addToChatHistory: (chatObject) => dispatch(addToChatHistory(chatObject)),
+        setIsBotTyping: (isBotTyping) => dispatch(setIsBotTyping(isBotTyping)),
         setActiveQuestionIndex: (activeIndex) => dispatch(setActiveQuestionIndex(activeIndex)),
+        setDisableFormInput: (isDisabled) => dispatch(setDisableFormInput(isDisabled)),
         setUserFirstName: (firstName) => dispatch(setUserFirstName(firstName)),
         setUserLastName: (lastName) => dispatch(setUserLastName(lastName)),
         setUserEmail: (email) => dispatch(setUserEmail(email)),
@@ -412,4 +405,5 @@ function mapDispatchToProps(dispatch) {
         saveState: () => dispatch(saveState()),
     }
 }
+
 export default connect(mapStateToProps, mapDispatchToProps)(ChatInput);

@@ -23,6 +23,11 @@ form.chat-input {
 }
 
 .chat-input .input-fields {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 20px;
 }
 
 .chat-input input[type=submit] {
@@ -33,6 +38,7 @@ form.chat-input {
   width: 100px;
   border-radius: 5px;
 }
+
 .chat-input button {
   border: none;
   font-size: 1.3em;
@@ -46,4 +52,7 @@ form.chat-input {
 .chat-input-group {
   width: 320px;
   text-align: center;
+  display: flex;
+  flex-flow: column;
+  align-items: center;
 }

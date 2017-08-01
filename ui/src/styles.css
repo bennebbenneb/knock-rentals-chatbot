@@ -1,15 +1,13 @@
 .chat-display {
-  display: flex;
-  flex-flow: column;
   justify-content: flex-end;
-  flex: 1;
   min-height: 35vh;
   background: #ccc;
   padding: 10px; }
 
 .chat-display .message-history {
   display: flex;
-  flex-flow: column; }
+  flex-flow: column;
+  flex: 1; }
 
 .chat-display .user-message {
   align-self: flex-end;
@@ -46,6 +44,13 @@ form.chat-input {
 .chat-input label {
   display: block; }
 
+.chat-input .input-fields {
+  display: flex;
+  width: 100%;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin: 20px; }
+
 .chat-input input[type=submit] {
   border: none;
   font-size: 1.3em;
@@ -65,10 +70,14 @@ form.chat-input {
 
 .chat-input-group {
   width: 320px;
-  text-align: center; }
+  text-align: center;
+  display: flex;
+  flex-flow: column;
+  align-items: center; }
 
 .chatbot {
-  height: 100vh; }
+  display: flex;
+  flex-flow: column; }
 
 body {
   margin: 0; }
