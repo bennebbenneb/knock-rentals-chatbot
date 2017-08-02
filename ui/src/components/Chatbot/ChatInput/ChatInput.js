@@ -1,7 +1,6 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import axios from 'axios'
-import smoothScroll from 'smoothscroll';
 import {
     addToChatHistory,
     setActiveQuestionIndex,
@@ -10,19 +9,7 @@ import {
     setIsBotTyping,
     setDisableFormInput
 } from "../../../actions/ChatScript/ChatScript";
-import {
-    setUserFirstName,
-    setUserLastName,
-    setUserEmail,
-    setUserPhone,
-    setUserMovingDate,
-    setUserMovingReasons,
-    setUserMovingReasonOther,
-    setUserBedrooms,
-    setUserAmenities,
-    setUserPets
 
-} from "../../../actions/User/User";
 import Checkbox from "./Checkbox/Checkbox";
 import Text from "./Text/Text";
 import Email from "./Email/Email";
@@ -36,7 +23,6 @@ class ChatInput extends React.Component {
     constructor() {
         super();
         this.inputTypes = {Checkbox, Text, Email, Phone, Textarea, DateInput, Select};
-        new Date();
     }
 
     handleFormSubmit(event) {
@@ -45,22 +31,15 @@ class ChatInput extends React.Component {
         this.props.setDisableFormInput(true);
         this._addUserText();
         if (this._isValid()) {
-
             setTimeout(() => {
                 this.props.setIsBotTyping(true);
             }, 500);
-
-
             setTimeout(() => {
                 this.props.setIsBotTyping(false);
                 setTimeout(() => {
                     this._addBotText();
                     this.props.setActiveQuestionIndex(this.props.activeQuestionIndex + 1);
                     this.props.setDisableFormInput(false);
-
-                    if (this.refs.continue) {
-                        smoothScroll(this.refs.continue)
-                    }
                 }, 500);
             }, 4000);
 
@@ -95,7 +74,7 @@ class ChatInput extends React.Component {
         }
 
         return (
-            <form className="chat-input" ref="chatForm" onSubmit={this.handleFormSubmit.bind(this)}>
+            <form className="chat-input" onSubmit={this.handleFormSubmit.bind(this)}>
                 {
                     !isCompleted
                         ?
@@ -381,7 +360,6 @@ function mapStateToProps(state) {
         history: state.ChatScript.present.history,
         activeQuestionIndex: state.ChatScript.present.activeQuestionIndex,
         completedMessage: state.ChatScript.present.completedMessage,
-        User: state.User,
         answers: state.ChatScript.present.answers,
         isFormDisabled: state.ChatScript.present.isFormDisabled
     }
@@ -393,16 +371,6 @@ function mapDispatchToProps(dispatch) {
         setIsBotTyping: (isBotTyping) => dispatch(setIsBotTyping(isBotTyping)),
         setActiveQuestionIndex: (activeIndex) => dispatch(setActiveQuestionIndex(activeIndex)),
         setDisableFormInput: (isDisabled) => dispatch(setDisableFormInput(isDisabled)),
-        setUserFirstName: (firstName) => dispatch(setUserFirstName(firstName)),
-        setUserLastName: (lastName) => dispatch(setUserLastName(lastName)),
-        setUserEmail: (email) => dispatch(setUserEmail(email)),
-        setUserPhone: (phone) => dispatch(setUserPhone(phone)),
-        setUserMovingDate: (date) => dispatch(setUserMovingDate(date)),
-        setUserBedrooms: (bedrooms) => dispatch(setUserBedrooms(bedrooms)),
-        setUserMovingReasons: (reasons) => dispatch(setUserMovingReasons(reasons)),
-        setUserMovingReasonOther: (otherReason) => dispatch(setUserMovingReasonOther(otherReason)),
-        setUserAmenities: (amenities) => dispatch(setUserAmenities(amenities)),
-        setUserPets: (pets) => dispatch(setUserPets(pets)),
         goBack: () => dispatch(goBack()),
         saveState: () => dispatch(saveState()),
     }

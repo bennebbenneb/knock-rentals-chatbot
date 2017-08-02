@@ -1,7 +1,13 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import axios from 'axios'
-import {setActiveQuestionIndex, setQuestions, setQuestionOrder,setCompletedMessage, addToChatHistory} from "../../actions/ChatScript/ChatScript";
+import {
+    setActiveQuestionIndex,
+    setQuestions,
+    setQuestionOrder,
+    setCompletedMessage,
+    addToChatHistory
+} from "../../actions/ChatScript/ChatScript";
 
 import ChatDisplay from './ChatDisplay/ChatDisplay';
 import ChatInput from './ChatInput/ChatInput';
@@ -13,7 +19,7 @@ class Chatbot extends React.Component {
 
                 const firstQuestionId = response.data.questionOrder[0];
                 const firstQuestion = response.data.questions[firstQuestionId];
-                this.props.addToChatHistory({...firstQuestion, isBot: true, timestamp:new Date().getTime()});
+                this.props.addToChatHistory({...firstQuestion, isBot: true, timestamp: new Date().getTime()});
 
                 this.props.setQuestions(response.data.questions);
                 this.props.setQuestionOrder(response.data.questionOrder);
@@ -38,7 +44,6 @@ function mapStateToProps(state) {
         questionOrder: state.ChatScript.questionOrder,
         questions: state.ChatScript.questions,
         activeQuestionIndex: state.ChatScript.activeQuestionIndex,
-        firstName: state.User.firstName,
     }
 }
 function mapDispatchToProps(dispatch) {
