@@ -1,6 +1,7 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import axios from 'axios'
+import smoothScroll from 'smoothscroll';
 import {
     addToChatHistory,
     setActiveQuestionIndex,
@@ -34,7 +35,7 @@ class ChatInput extends React.Component {
 
     constructor() {
         super();
-        this.inputTypes = {Checkbox, Text, Email, Phone, Textarea, DateInput, Select}
+        this.inputTypes = {Checkbox, Text, Email, Phone, Textarea, DateInput, Select};
         new Date();
     }
 
@@ -56,6 +57,10 @@ class ChatInput extends React.Component {
                     this._addBotText();
                     this.props.setActiveQuestionIndex(this.props.activeQuestionIndex + 1);
                     this.props.setDisableFormInput(false);
+
+                    if (this.refs.continue) {
+                        smoothScroll(this.refs.continue)
+                    }
                 }, 500);
             }, 4000);
 
@@ -64,9 +69,7 @@ class ChatInput extends React.Component {
             this.props.setDisableFormInput(false);
         }
 
-        const isCompleted = (this.props.activeQuestionIndex +1 ) === this.props.questionOrder.length;
-        console.log("isCompleted")
-        console.log(isCompleted)
+        const isCompleted = (this.props.activeQuestionIndex + 1 ) === this.props.questionOrder.length;
         if (isCompleted) {
             axios.post("/service/chatbot/", {
                 answers: this.props.answers,
@@ -104,7 +107,7 @@ class ChatInput extends React.Component {
                 <div className="input-fields">{inputFields ? inputFields : ""}</div>
                 {
                     !isCompleted
-                        ? <input disabled={this.props.isFormDisabled} type="submit" value="Continue"/>
+                        ? <input ref="continue" disabled={this.props.isFormDisabled} type="submit" value="Continue"/>
                         : ""
                 }
             </form>
@@ -310,11 +313,6 @@ class ChatInput extends React.Component {
             }
         }
         return true;
-    }
-
-    _addToHistory() {
-        this._addUserText();
-        this._addBotText();
     }
 
     _addUserText() {

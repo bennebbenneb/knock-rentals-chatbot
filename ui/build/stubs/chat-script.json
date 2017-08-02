@@ -150,8 +150,8 @@
     "phone",
     "movingDate",
     "bedrooms",
-    "reasons",
     "pets",
+    "reasons",
     "amenities"
   ],
   "questions": {
