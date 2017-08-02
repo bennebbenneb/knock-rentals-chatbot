@@ -321,9 +321,13 @@ class ChatInput extends React.Component {
             let text = "";
             if (answer.type === "Checkbox") {
                 text = answer.options.reduce((acc, option) => {
-                    acc += option.text + " ";
-                    return acc;
-                }, "") + " ";
+                        const usersAnswer = this.props.answers[this._getCurrentQuestionId()][option.value];
+
+                        if (usersAnswer.checked) {
+                            acc += option.text + " ";
+                        }
+                        return acc;
+                    }, "") + " ";
             }
             else {
                 text = this.props.answers[this._getCurrentQuestionId()][answer.key].text + " ";
