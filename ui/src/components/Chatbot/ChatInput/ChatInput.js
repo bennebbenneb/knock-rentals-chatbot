@@ -82,6 +82,12 @@ class ChatInput extends React.Component {
                             this.props.ChatScript
                         );
                     }
+                    else {
+                        axios.post("/service/save-complete-chat-session/", {
+                            answers: this.props.answers,
+                            history: this.props.history
+                        });
+                    }
                 });
         }
         else {
@@ -103,14 +109,6 @@ class ChatInput extends React.Component {
                         this.props.ChatScript
                     );
                 });
-        }
-
-        const isCompleted = (this.props.activeQuestionIndex + 1 ) === this.props.questionOrder.length;
-        if (isCompleted) {
-            axios.post("/service/save-complete-chat-session/", {
-                answers: this.props.answers,
-                history: this.props.history
-            });
         }
     }
 
