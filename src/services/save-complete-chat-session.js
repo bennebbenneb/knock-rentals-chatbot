@@ -11,7 +11,7 @@ app.post("/service/save-complete-chat-session/", (req, res) => {
             ipAddr = req.connection.remoteAddress;
         }
         db.collection("chatbot").insertOne(
-            Object.assign(req.body,{
+            Object.assign(req.body, {
                 ipAddress: ipAddr,
                 userAgent: req.headers['user-agent']
             }),
@@ -19,7 +19,9 @@ app.post("/service/save-complete-chat-session/", (req, res) => {
                 if (err) {
                     res.status(500);
                 }
-                req.session.state = "";
+                else {
+                    req.session.destroy()
+                }
                 res.send(JSON.stringify({}));
             }
         );
