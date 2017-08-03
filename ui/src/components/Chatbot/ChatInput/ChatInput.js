@@ -20,6 +20,8 @@ import Textarea from "./Textarea/Textarea";
 import DateInput from "./DateInput/DateInput";
 import Select from "./Select/Select";
 
+import validator from "../../../utility/validator/validator"
+
 class ChatInput extends React.Component {
 
     constructor() {
@@ -32,26 +34,27 @@ class ChatInput extends React.Component {
         this.props.saveState();
         this.props.setDisableFormInput(true);
         this._addUserText();
-        if (this._isValid()) {
+        const validationObj = this._getValidationObj();
 
-            const startBotTyping = () => {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        this.props.setIsBotTyping(true);
-                        resolve();
-                    }, 500);
-                });
-            };
+        const startBotTyping = () => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    this.props.setIsBotTyping(true);
+                    resolve();
+                }, 500);
+            });
+        };
 
-            const stopBotTyping = () => {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        this.props.setIsBotTyping(false);
-                        resolve();
-                    }, 2000);
-                });
-            };
+        const stopBotTyping = () => {
+            return new Promise((resolve) => {
+                setTimeout(() => {
+                    this.props.setIsBotTyping(false);
+                    resolve();
+                }, 2000);
+            });
+        };
 
+        if (validationObj.isValid) {
             const enterBotText = () => {
                 return new Promise((resolve) => {
                     setTimeout(() => {
@@ -68,7 +71,18 @@ class ChatInput extends React.Component {
                 .then(enterBotText);
         }
         else {
-            this.props.setDisableFormInput(false);
+            const enterBotText = () => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        this._addBotErrorText(validationObj);
+                        this.props.setDisableFormInput(false);
+                        resolve();
+                    }, 500);
+                });
+            };
+            startBotTyping()
+                .then(stopBotTyping)
+                .then(enterBotText);
         }
 
         const isCompleted = (this.props.activeQuestionIndex + 1 ) === this.props.questionOrder.length;
@@ -86,7 +100,6 @@ class ChatInput extends React.Component {
         let inputFields = [];
         if (currentQuestion) {
             const answers = currentQuestion.answers;
-
             if (answers)
                 inputFields = answers.map((answer) => {
                     const Answertype = this.inputTypes[answer.type];
@@ -132,189 +145,28 @@ class ChatInput extends React.Component {
         }
     }
 
-
-    _isValid() {
-        let isValid = true;
+    _getValidationObj() {
+        let validationObj = {
+            isValid: true
+        };
         const currentQuestion = this._getCurrentQuestion();
         currentQuestion.answers.forEach((answer) => {
             if (answer.required && this.props.answers[this._getCurrentQuestionId()][answer.key].value === "") {
-                let randomizer = Math.random() * 3;
-                if (randomizer > 2) {
-                    this.props.addToChatHistory({
-                        text: " " + answer.text + " " + "is required.",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                else if (randomizer > 1) {
-                    this.props.addToChatHistory({
-                        text: "Whoops! " + answer.text + " is required.",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                else {
-                    this.props.addToChatHistory({
-                        text: "Shucks! " + answer.text + " is required.",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-
-                isValid = false;
+                validationObj = {
+                    isValid: false,
+                    messages: [
+                        answer.text + " is required.",
+                        "Whoops! " + answer.text + " is required.",
+                        "Shucks! " + answer.text + " is required."
+                    ]
+                };
             }
 
-            if (answer.validation) {
-                isValid = isValid && this._validator(answer.validation, this.props.answers[this._getCurrentQuestionId()][answer.key].text);
+            if (answer.validation && validationObj.isValid) {
+                validationObj = validator(answer.validation, this.props.answers[this._getCurrentQuestionId()][answer.key].text);
             }
         });
-        return isValid;
-    }
-
-    _validator(validationKey, value) {
-        if (validationKey === "tel") {
-            const rawNumbers = value.replace(/\D+/g, "");
-            const randomizer = Math.random() * 3;
-
-            if (rawNumbers.length < 10) {
-                if (randomizer > 2) {
-                    this.props.addToChatHistory({
-                        text: "Make sure to enter your full 10 digit phone number",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                else if (randomizer > 1) {
-                    this.props.addToChatHistory({
-                        text: "I think you're missing some numbers",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                else {
-                    this.props.addToChatHistory({
-                        text: "Whoops! You're missing some numbers",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                return false;
-            }
-            else if ((rawNumbers + "").indexOf("555") === 0) {
-                if (randomizer > 2) {
-                    this.props.addToChatHistory({
-                        text: "A 555 number? I see...",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                else if (randomizer > 1) {
-                    this.props.addToChatHistory({
-                        text: "Did you get this number from a movie by chance?",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                else {
-                    this.props.addToChatHistory({
-                        text: "We need a valid phone number",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                return false;
-            }
-        }
-        if (validationKey === "email") {
-            if (!value.match(/\S+@\S+/)) {
-                const randomizer = Math.random() * 3;
-                if (randomizer > 2) {
-                    this.props.addToChatHistory({
-                        text: "That email doesn't look quite right.",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                else if (randomizer > 1) {
-                    this.props.addToChatHistory({
-                        text: "Are you sure that's your email?",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                else {
-                    this.props.addToChatHistory({
-                        text: "Fix the issue with your email before we go on.",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                return false;
-            }
-        }
-        if (validationKey === "date") {
-            const movingDate = new Date(value);
-            if (movingDate.toString() === "Invalid Date") {
-                this.props.addToChatHistory({
-                    text: "That's not a valid date. Try this format, MM/DD/YYYY",
-                    isBot: true,
-                    isError: true,
-                    timestamp: new Date().getTime()
-                });
-                return false;
-            }
-
-            let now = new Date();
-            now.setMilliseconds(0);
-            now.setSeconds(0);
-            now.setMinutes(0);
-            now.setHours(0);
-            const diffInDates = movingDate.getTime() - now.getTime();
-            const oneDay = 8.64e+7;
-
-            if (diffInDates < oneDay) {
-                const randomizer = Math.random() * 3;
-                if (randomizer > 2) {
-                    this.props.addToChatHistory({
-                        text: "Please choose a date at least one full day from today.",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-
-                else if (randomizer > 1) {
-                    this.props.addToChatHistory({
-                        text: "That's too soon.",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                else {
-                    this.props.addToChatHistory({
-                        text: "We need more notice.",
-                        isBot: true,
-                        isError: true,
-                        timestamp: new Date().getTime()
-                    });
-                }
-                return false;
-            }
-        }
-        return true;
+        return validationObj;
     }
 
     _addUserText() {
@@ -361,6 +213,15 @@ class ChatInput extends React.Component {
                 timestamp: new Date().getTime()
             });
         }
+    }
+
+    _addBotErrorText(validationObj) {
+        const messageIndex = Math.floor(Math.random() * validationObj.messages.length);
+        this.props.addToChatHistory({
+            text: validationObj.messages[messageIndex],
+            isBot: true,
+            timestamp: new Date().getTime()
+        });
     }
 
     _getCurrentQuestion() {
