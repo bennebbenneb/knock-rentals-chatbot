@@ -5,7 +5,7 @@ const ChatScript = (state = {
         questionOrder: [0],
         history: [],
         answers: {},
-        isBotTyping:false
+        isBotTyping: false
     },
     past: []
 }, action = {}) => {
@@ -65,6 +65,9 @@ const ChatScript = (state = {
     if (action.type === "SAVE_STATE") {
         const past = [{...state.present}].concat(state.past.concat());
         return {...state, past};
+    }
+    if (action.type === "SET_STATE") {
+        return action.payload;
     }
     if (action.type === "GO_BACK") {
         const past = state.past.slice(1);

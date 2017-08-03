@@ -8,8 +8,7 @@ const validator = (validationKey, value) => {
                     "Make sure to enter your full 10 digit phone number",
                     "I think you're missing some numbers",
                     "Whoops! You're missing some numbers"
-                ],
-                timestamp: new Date().getTime()
+                ]
             };
         }
     }
@@ -21,8 +20,7 @@ const validator = (validationKey, value) => {
                     "That email doesn't look quite right.",
                     "Are you sure that's your email?",
                     "Fix the issue with your email before we go on."
-                ],
-                timestamp: new Date().getTime()
+                ]
             };
         }
     }
@@ -33,8 +31,7 @@ const validator = (validationKey, value) => {
                 isValid: false,
                 messages: [
                     "That's not a valid date. Try this format, MM/DD/YYYY"
-                ],
-                timestamp: new Date().getTime()
+                ]
             };
         }
 
@@ -53,8 +50,7 @@ const validator = (validationKey, value) => {
                     "Please choose a date at least one full day from today.",
                     "That's too soon.",
                     "We need more notice."
-                ],
-                timestamp: new Date().getTime()
+                ]
             };
         }
     }

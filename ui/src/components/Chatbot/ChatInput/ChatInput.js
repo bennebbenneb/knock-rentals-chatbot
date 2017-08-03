@@ -32,6 +32,11 @@ class ChatInput extends React.Component {
     handleFormSubmit(event) {
         event.preventDefault();
         this.props.saveState();
+        axios.post(
+            "/services/save-chat-state/",
+            this.props.ChatScript
+        );
+
         this.props.setDisableFormInput(true);
         this._addUserText();
         const validationObj = this._getValidationObj();
@@ -68,7 +73,16 @@ class ChatInput extends React.Component {
 
             startBotTyping()
                 .then(stopBotTyping)
-                .then(enterBotText);
+                .then(enterBotText)
+                .then(() => {
+                    const isCompleted = this.props.activeQuestionIndex === this.props.questionOrder.length;
+                    if (!isCompleted) {
+                        axios.post(
+                            "/services/save-chat-state/",
+                            this.props.ChatScript
+                        );
+                    }
+                });
         }
         else {
             const enterBotText = () => {
@@ -82,12 +96,18 @@ class ChatInput extends React.Component {
             };
             startBotTyping()
                 .then(stopBotTyping)
-                .then(enterBotText);
+                .then(enterBotText)
+                .then(() => {
+                    axios.post(
+                        "/services/save-chat-state/",
+                        this.props.ChatScript
+                    );
+                });
         }
 
         const isCompleted = (this.props.activeQuestionIndex + 1 ) === this.props.questionOrder.length;
         if (isCompleted) {
-            axios.post("/service/chatbot/", {
+            axios.post("/service/save-complete-chat-session/", {
                 answers: this.props.answers,
                 history: this.props.history
             });
@@ -142,6 +162,10 @@ class ChatInput extends React.Component {
     _goBack() {
         if (this._hasUserHistory()) {
             this.props.goBack();
+            axios.post(
+                "/services/save-chat-state/",
+                this.props.ChatScript
+            );
         }
     }
 
@@ -245,7 +269,8 @@ function mapStateToProps(state) {
         activeQuestionIndex: state.ChatScript.present.activeQuestionIndex,
         completedMessage: state.ChatScript.present.completedMessage,
         answers: state.ChatScript.present.answers,
-        isFormDisabled: state.ChatScript.present.isFormDisabled
+        isFormDisabled: state.ChatScript.present.isFormDisabled,
+        ChatScript: state.ChatScript
     }
 }
 

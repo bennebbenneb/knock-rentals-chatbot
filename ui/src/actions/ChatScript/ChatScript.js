@@ -56,6 +56,12 @@ const ChatScript = {
         return {
             type: "SAVE_STATE"
         }
+    },
+    setState: (state) => {
+        return {
+            type: "SET_STATE",
+            payload:state
+        }
     }
 };
 module.exports = ChatScript;
