@@ -1,6 +1,8 @@
 import React from 'react';
 import {connect} from 'react-redux'
 import axios from 'axios'
+import Promise from 'promise';
+
 import {
     addToChatHistory,
     setActiveQuestionIndex,
@@ -31,18 +33,39 @@ class ChatInput extends React.Component {
         this.props.setDisableFormInput(true);
         this._addUserText();
         if (this._isValid()) {
-            setTimeout(() => {
-                this.props.setIsBotTyping(true);
-            }, 500);
-            setTimeout(() => {
-                this.props.setIsBotTyping(false);
-                setTimeout(() => {
-                    this._addBotText();
-                    this.props.setActiveQuestionIndex(this.props.activeQuestionIndex + 1);
-                    this.props.setDisableFormInput(false);
-                }, 500);
-            }, 4000);
 
+            const startBotTyping = () => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        this.props.setIsBotTyping(true);
+                        resolve();
+                    }, 500);
+                });
+            };
+
+            const stopBotTyping = () => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        this.props.setIsBotTyping(false);
+                        resolve();
+                    }, 2000);
+                });
+            };
+
+            const enterBotText = () => {
+                return new Promise((resolve) => {
+                    setTimeout(() => {
+                        this._addBotText();
+                        this.props.setActiveQuestionIndex(this.props.activeQuestionIndex + 1);
+                        this.props.setDisableFormInput(false);
+                        resolve();
+                    }, 500);
+                });
+            };
+
+            startBotTyping()
+                .then(stopBotTyping)
+                .then(enterBotText);
         }
         else {
             this.props.setDisableFormInput(false);
@@ -300,13 +323,13 @@ class ChatInput extends React.Component {
             let text = "";
             if (answer.type === "Checkbox") {
                 text = answer.options.reduce((acc, option) => {
-                        const usersAnswer = this.props.answers[this._getCurrentQuestionId()][option.value];
+                    const usersAnswer = this.props.answers[this._getCurrentQuestionId()][option.value];
 
-                        if (usersAnswer.checked) {
-                            acc += option.text + " ";
-                        }
-                        return acc;
-                    }, "") + " ";
+                    if (usersAnswer.checked) {
+                        acc += option.text + " ";
+                    }
+                    return acc;
+                }, "") + " ";
             }
             else {
                 text = this.props.answers[this._getCurrentQuestionId()][answer.key].text + " ";
