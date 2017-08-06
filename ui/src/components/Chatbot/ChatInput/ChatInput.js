@@ -160,10 +160,12 @@ class ChatInput extends React.Component {
     _goBack() {
         if (this._hasUserHistory()) {
             this.props.goBack();
-            axios.post(
-                "/services/save-chat-state/",
-                this.props.ChatScript
-            );
+            setTimeout(() => {
+                axios.post(
+                    "/services/save-chat-state/",
+                    this.props.ChatScript
+                );
+            }, 1);
         }
     }
 

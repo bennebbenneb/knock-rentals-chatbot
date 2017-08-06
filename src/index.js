@@ -7,7 +7,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(compression({level: 9}));
 
-// service for storing the completed chat session
+require("./graphql/graphql");
 require("./services/save-complete-chat-session");
 
 require("./services/load-chat-state");
