@@ -24,10 +24,12 @@ module.exports = {
                     .toArray()
                     .then((arr) => {
                         resolve(arr);
-                    });
+                    })
+                    .catch(() => {
+                    reject();
+                });
             })
-            .catch((e, r) => {
-                console.log(e, r);
+            .catch(() => {
                 reject();
             });
         });
