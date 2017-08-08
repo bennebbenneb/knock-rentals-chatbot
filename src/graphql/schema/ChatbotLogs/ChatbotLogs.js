@@ -13,6 +13,8 @@ module.exports = {
         limit: {type: GraphQLInt}
     },
     resolve(parentValue, args) {
+        args.skip = args.skip || 0;
+        args.limit = args.skip || 10;
         return new Promise((resolve, reject) => {
             mongoDBPromise.then((db) => {
                 db.collection("chatbot")
