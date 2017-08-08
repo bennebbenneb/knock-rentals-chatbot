@@ -2,12 +2,14 @@ const {
     GraphQLObjectType,
     GraphQLSchema
 } = require("graphql");
-const chatbot = require("./model/chatbot/chatbot");
+const chatbot = require("./schema/ChatbotLog/ChatbotLog");
+const chatbots = require("./schema/ChatbotLogs/ChatbotLogs");
 
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        chatbot: chatbot
+        chatbot: chatbot,
+        chatbots: chatbots,
     }
 });
 
