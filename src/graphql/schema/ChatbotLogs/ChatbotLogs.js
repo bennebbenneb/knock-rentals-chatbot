@@ -14,7 +14,7 @@ module.exports = {
     },
     resolve(parentValue, args) {
         args.skip = args.skip || 0;
-        args.limit = args.skip || 10;
+        args.limit = args.limit || 10;
         return new Promise((resolve, reject) => {
             mongoDBPromise.then((db) => {
                 db.collection("chatbot")
